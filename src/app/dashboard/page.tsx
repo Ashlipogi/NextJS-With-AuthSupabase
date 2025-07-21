@@ -4,7 +4,7 @@ import { useAuth } from '../components/AuthProvider'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Button } from '../components/ui/button'
-import { toast } from 'sonner'
+
 
 export default function Dashboard() {
   const { session, user, isLoading, signOut } = useAuth()

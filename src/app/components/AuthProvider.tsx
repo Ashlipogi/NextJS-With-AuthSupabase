@@ -78,16 +78,22 @@ export const AuthProvider = ({
     }
   }, [supabase])
 
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-    } catch (error: any) {
+const signOut = async () => {
+  try {
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
+  } catch (error: unknown) {
+    if (error instanceof Error) {
       console.error('Error signing out:', error)
       toast.error('Error signing out: ' + error.message)
-      throw error
+    } else {
+      console.error('Unknown error signing out:', error)
+      toast.error('An unknown error occurred during sign out.')
     }
+    throw error
   }
+}
+
 
   return (
     <AuthContext.Provider value={{

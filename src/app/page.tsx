@@ -21,9 +21,9 @@ export default function Dashboard() {
       await signOut()
       // Small delay to ensure toast shows before redirect
       setTimeout(() => {
-        router.push('/')
+      router.push('/')
       }, 500)
-    } catch (error) {
+    } catch {
       toast.error('Error signing out')
     }
   }

@@ -9,10 +9,10 @@ export function createClient() {
 }
 
 // Server client is only used in server components when needed
-export function createServerClient() {
+export async function createServerClient() {
   // This will be imported dynamically in server components only
-  const { cookies } = require('next/headers')
-  const cookieStore = cookies()
+  const { cookies } = await import('next/headers')
+  const cookieStore = await cookies()
 
   return supabaseCreateServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

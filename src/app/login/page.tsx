@@ -25,9 +25,13 @@ export default function Login() {
 
       if (error) throw error
 
-      router.push('/dashboard')
-    } catch (error: any) {
-      toast.error(error.message || 'An error occurred during sign in')
+    router.push('/dashboard')
+    } catch (error: unknown) {
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : 'An error occurred during sign in'
+    )
     } finally {
       setLoading(false)
     }

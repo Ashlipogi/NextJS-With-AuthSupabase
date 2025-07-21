@@ -28,9 +28,13 @@ export default function Register() {
 
       toast.success('Success! Please check your email for a verification link.')
       setEmail('')
-      setPassword('')
-    } catch (error: any) {
+    setPassword('')
+    } catch (error: unknown) {
+    if (error instanceof Error) {
       toast.error(error.message || 'An error occurred during registration')
+    } else {
+      toast.error('An error occurred during registration')
+    }
     } finally {
       setLoading(false)
     }
