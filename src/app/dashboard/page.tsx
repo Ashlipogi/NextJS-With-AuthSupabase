@@ -4,7 +4,7 @@ import { useAuth } from '../components/AuthProvider'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { Button } from '../components/ui/button'
-
+import { toast } from 'sonner'
 
 export default function Dashboard() {
   const { session, user, isLoading, signOut } = useAuth()
@@ -18,7 +18,10 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     await signOut()
-    router.push('/')
+    // Delay to ensure toast shows and redirect happens before component unmount
+    setTimeout(() => {
+      router.push('/')
+    }, 10)
   }
 
   if (isLoading) {
@@ -30,7 +33,12 @@ export default function Dashboard() {
   }
 
   if (!session || !user) {
-    return null
+    // Prevents black screen flash
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-gray-500">Redirecting...</p>
+      </div>
+    )
   }
 
   return (
@@ -45,7 +53,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
+
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">

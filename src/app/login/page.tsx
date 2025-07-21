@@ -4,19 +4,18 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '../components/AuthProvider'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const router = useRouter()
   const { supabase } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
     
     try {
       const { error } = await supabase.auth.signInWithPassword({
@@ -26,9 +25,9 @@ export default function Login() {
 
       if (error) throw error
 
-      router.push('/')
+      router.push('/dashboard')
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred during sign in')
+      toast.error(error.message || 'An error occurred during sign in')
     } finally {
       setLoading(false)
     }
@@ -105,12 +104,6 @@ export default function Login() {
             </button>
           </div>
         </form>
-
-        {message && (
-          <div className="p-4 text-sm text-red-700 bg-red-100 border border-red-200 rounded-lg">
-            {message}
-          </div>
-        )}
       </div>
     </div>
   )

@@ -1,12 +1,12 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient, Session, User } from '@supabase/supabase-js'
-import { Database } from '@/types/supabase'
+import { toast } from 'sonner'
 
 type AuthContextType = {
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient
   session: Session | null
   user: User | null
   isLoading: boolean
@@ -20,8 +20,8 @@ export const AuthProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const [supabase] = useState(() => 
-    createBrowserClient<Database>(
+  const [supabase] = useState(() =>
+    createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
@@ -30,24 +30,47 @@ export const AuthProvider = ({
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  // Track if toast has already been shown to prevent duplicates
+  const hasShownWelcome = useRef(false)
+  const hasShownSignedOut = useRef(false)
+
   useEffect(() => {
-    // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setSession(session)
-      setUser(session?.user ?? null)
-      setIsLoading(false)
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error('Error getting session:', error)
+          toast.error('Error loading session')
+        }
+        setSession(session)
+        setUser(session?.user ?? null)
+      } catch (error) {
+        console.error('Error in getInitialSession:', error)
+        toast.error('Error loading authentication')
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     getInitialSession()
 
-    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
       setIsLoading(false)
+
+      // Only show toast once per session
+      if (event === 'SIGNED_IN' && !hasShownWelcome.current) {
+        toast.success('Welcome back!')
+        hasShownWelcome.current = true
+        hasShownSignedOut.current = false // reset sign out flag
+      } else if (event === 'SIGNED_OUT' && !hasShownSignedOut.current) {
+        toast.info('You have been signed out')
+        hasShownSignedOut.current = true
+        hasShownWelcome.current = false // reset sign in flag
+      }
     })
 
     return () => {
@@ -56,16 +79,23 @@ export const AuthProvider = ({
   }, [supabase])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    } catch (error: any) {
+      console.error('Error signing out:', error)
+      toast.error('Error signing out: ' + error.message)
+      throw error
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      supabase, 
-      session, 
-      user, 
-      isLoading, 
-      signOut 
+    <AuthContext.Provider value={{
+      supabase,
+      session,
+      user,
+      isLoading,
+      signOut
     }}>
       {children}
     </AuthContext.Provider>

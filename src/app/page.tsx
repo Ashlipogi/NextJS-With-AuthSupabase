@@ -1,11 +1,32 @@
 'use client'
 
 import { useAuth } from './components/AuthProvider'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { Button } from './components/ui/button'
+import { toast } from 'sonner'
 
-export default function Home() {
+export default function Dashboard() {
   const { session, user, isLoading, signOut } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && !session) {
+      router.push('/login')
+    }
+  }, [session, isLoading, router])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      // Small delay to ensure toast shows before redirect
+      setTimeout(() => {
+        router.push('/')
+      }, 500)
+    } catch (error) {
+      toast.error('Error signing out')
+    }
+  }
 
   if (isLoading) {
     return (
@@ -15,64 +36,48 @@ export default function Home() {
     )
   }
 
+  if (!session || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-gray-500">Redirecting...</p>
+      </div>
+    )
+  }
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">
-            Welcome to FIRSTNEXT
-          </h1>
-          
-          {session && user ? (
-            <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                  Hello, {user.email}!
-                </h2>
-                <p className="text-gray-600">
-                  You are successfully signed in.
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <Link href="/dashboard">
-                  <Button className="w-full">
-                    Go to Dashboard
-                  </Button>
-                </Link>
-                
-                <Button 
-                  onClick={() => signOut()} 
-                  variant="outline" 
-                  className="w-full"
-                >
-                  Sign Out
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
-              <p className="text-gray-600 mb-6">
-                Get started by signing in or creating a new account.
-              </p>
-              
-              <div className="space-y-4">
-                <Link href="/login">
-                  <Button className="w-full">
-                    Sign In
-                  </Button>
-                </Link>
-                
-                <Link href="/register">
-                  <Button variant="outline" className="w-full">
-                    Create Account
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          )}
+    <div className="min-h-screen bg-gray-100">
+      <div className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <Button onClick={handleSignOut} variant="outline">
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
-    </main>
+
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Welcome back!</h2>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Email:</span> {user.email}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">User ID:</span> {user.id}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Email confirmed:</span> {user.email_confirmed_at ? 'Yes' : 'No'}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Last sign in:</span> {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

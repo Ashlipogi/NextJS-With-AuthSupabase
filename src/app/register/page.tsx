@@ -3,19 +3,17 @@
 import { useState } from 'react'
 import { useAuth } from '../components/AuthProvider'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [messageType, setMessageType] = useState<'success' | 'error'>('error')
   const { supabase } = useAuth()
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage('')
     
     try {
       const { error } = await supabase.auth.signUp({
@@ -28,13 +26,11 @@ export default function Register() {
 
       if (error) throw error
 
-      setMessage('Success! Please check your email for a verification link.')
-      setMessageType('success')
+      toast.success('Success! Please check your email for a verification link.')
       setEmail('')
       setPassword('')
     } catch (error: any) {
-      setMessage(error.message || 'An error occurred during registration')
-      setMessageType('error')
+      toast.error(error.message || 'An error occurred during registration')
     } finally {
       setLoading(false)
     }
@@ -112,16 +108,6 @@ export default function Register() {
             </button>
           </div>
         </form>
-
-        {message && (
-          <div className={`p-4 text-sm rounded-lg border ${
-            messageType === 'success' 
-              ? 'bg-green-100 text-green-700 border-green-200' 
-              : 'bg-red-100 text-red-700 border-red-200'
-          }`}>
-            {message}
-          </div>
-        )}
       </div>
     </div>
   )

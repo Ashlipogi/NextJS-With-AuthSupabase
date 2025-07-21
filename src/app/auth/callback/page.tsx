@@ -19,7 +19,7 @@ export default function AuthCallback() {
       }
 
       if (data.session) {
-        router.push('/')
+        router.push('/dashboard')
       } else {
         router.push('/login')
       }
