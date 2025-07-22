@@ -60,17 +60,6 @@ export const AuthProvider = ({
       setSession(session)
       setUser(session?.user ?? null)
       setIsLoading(false)
-
-      // Only show toast once per session
-      if (event === 'SIGNED_IN' && !hasShownWelcome.current) {
-        toast.success('Welcome back!')
-        hasShownWelcome.current = true
-        hasShownSignedOut.current = false // reset sign out flag
-      } else if (event === 'SIGNED_OUT' && !hasShownSignedOut.current) {
-        toast.info('You have been signed out')
-        hasShownSignedOut.current = true
-        hasShownWelcome.current = false // reset sign in flag
-      }
     })
 
     return () => {

@@ -2,22 +2,29 @@
 
 import { useAuth } from "../components/AuthProvider"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { Layout } from "../components/Layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Skeleton } from "../components/ui/skeleton"
 import { User, Mail, Calendar, Shield, Clock } from "lucide-react"
+import { toast } from "sonner"
 
 export default function Dashboard() {
   const { session, user, isLoading } = useAuth()
   const router = useRouter()
+  const hasWelcomed = useRef(false)
 
   useEffect(() => {
     if (!isLoading && !session) {
       router.push("/login")
     }
-  }, [session, isLoading, router])
+    // Show welcome toast only once when user is present
+    if (!isLoading && session && user && !hasWelcomed.current) {
+      toast.success("Welcome back!")
+      hasWelcomed.current = true
+    }
+  }, [session, isLoading, router, user])
 
   if (isLoading) {
     return (

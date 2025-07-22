@@ -1,9 +1,8 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "../components/AuthProvider"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -13,7 +12,7 @@ import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
 import { Separator } from "../components/ui/separator"
 import { Alert, AlertDescription } from "../components/ui/alert"
-import { Loader2, Mail, Lock, ArrowRight } from "lucide-react"
+import { Loader2, Mail, Lock, ArrowRight, Info, CheckCircle } from "lucide-react"
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -21,7 +20,26 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { supabase } = useAuth()
+
+  // Handle URL parameters and show appropriate messages
+  useEffect(() => {
+    const message = searchParams.get('message')
+    const error = searchParams.get('error')
+
+    if (message === 'password_updated_verify_email') {
+      toast.info('Password updated successfully! Please verify your email to complete setup.')
+    } else if (message === 'password_reset_success') {
+      toast.success('Password updated successfully! You can now sign in with your new password.')
+    }
+
+    if (error === 'callback_error') {
+      toast.error('Authentication error occurred. Please try again.')
+    } else if (error === 'invalid_link') {
+      toast.error('Invalid or expired reset link. Please request a new one.')
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,6 +64,10 @@ export default function Login() {
     }
   }
 
+  // Show message from URL parameters
+  const message = searchParams.get('message')
+  const urlError = searchParams.get('error')
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
@@ -54,6 +76,35 @@ export default function Login() {
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Welcome back</h1>
           <p className="text-muted-foreground">Sign in to your account to continue</p>
         </div>
+
+        {/* URL Message Alerts */}
+        {message === 'password_updated_verify_email' && (
+          <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950">
+            <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <AlertDescription className="text-blue-700 dark:text-blue-300">
+              Password updated successfully! Please check your email to verify your account.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {message === 'password_reset_success' && (
+          <Alert className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-700 dark:text-green-300">
+              Password updated successfully! You can now sign in with your new password.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* URL Error Alert */}
+        {urlError && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              {urlError === 'callback_error' && 'Authentication error occurred. Please try again.'}
+              {urlError === 'invalid_link' && 'Invalid or expired reset link. Please request a new one.'}
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Login Form */}
         <Card className="shadow-lg border-0 bg-card">
@@ -89,9 +140,17 @@ export default function Login() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </Label>
+                  <Link 
+                    href="/forgot-password" 
+                    className="text-sm text-primary hover:underline transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
