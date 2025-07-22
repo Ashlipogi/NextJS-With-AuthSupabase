@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "../components/AuthProvider"
 import Link from "next/link"
@@ -14,7 +14,7 @@ import { Separator } from "../components/ui/separator"
 import { Alert, AlertDescription } from "../components/ui/alert"
 import { Loader2, Mail, Lock, ArrowRight, Info, CheckCircle } from "lucide-react"
 
-export default function Login() {
+function LoginContent() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -195,5 +195,20 @@ export default function Login() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <h2 className="text-lg font-semibold text-foreground">Loading...</h2>
+        </div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }
