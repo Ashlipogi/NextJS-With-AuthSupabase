@@ -1,83 +1,105 @@
-'use client'
+"use client"
 
-import { useAuth } from './components/AuthProvider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { Button } from './components/ui/button'
-import { toast } from 'sonner'
+import Link from "next/link"
+import { useAuth } from "./components/AuthProvider"
+import { Button } from "./components/ui/button"
+import { Card, CardDescription, CardHeader, CardTitle } from "./components/ui/card"
+import { ArrowRight, Shield, Zap, Users } from "lucide-react"
 
-export default function Dashboard() {
-  const { session, user, isLoading, signOut } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isLoading && !session) {
-      router.push('/login')
-    }
-  }, [session, isLoading, router])
-
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-      // Small delay to ensure toast shows before redirect
-      setTimeout(() => {
-      router.push('/')
-      }, 500)
-    } catch {
-      toast.error('Error signing out')
-    }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  if (!session || !user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-gray-500">Redirecting...</p>
-      </div>
-    )
-  }
+export default function HomePage() {
+  const { session } = useAuth()
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border/40 bg-background/95 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <Button onClick={handleSignOut} variant="outline">
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Welcome back!</h2>
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Email:</span> {user.email}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">User ID:</span> {user.id}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Email confirmed:</span> {user.email_confirmed_at ? 'Yes' : 'No'}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Last sign in:</span> {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}
-              </p>
+          <div className="flex h-16 items-center justify-between">
+            <h1 className="text-xl font-semibold tracking-tight">FIRSTNEXT</h1>
+            <div className="flex items-center space-x-4">
+              {session ? (
+                <Button asChild>
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link href="/login">Sign In</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/register">Get Started</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center space-y-8">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">Welcome to FIRSTNEXT</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              A modern authentication system built with Next.js and Supabase, featuring elegant UI components and
+              seamless user experience.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {session ? (
+              <Button size="lg" asChild>
+                <Link href="/dashboard">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button size="lg" asChild>
+                  <Link href="/register">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link href="/login">Sign In</Link>
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="mt-24 grid gap-8 md:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <Shield className="h-8 w-8 text-primary mb-2" />
+              <CardTitle>Secure Authentication</CardTitle>
+              <CardDescription>Built with Supabase for enterprise-grade security and reliability.</CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Zap className="h-8 w-8 text-primary mb-2" />
+              <CardTitle>Modern UI</CardTitle>
+              <CardDescription>
+                Beautiful, responsive design with shadcn/ui components and dark mode support.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <Users className="h-8 w-8 text-primary mb-2" />
+              <CardTitle>User-Friendly</CardTitle>
+              <CardDescription>Intuitive interface with clear feedback and smooth user experience.</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </main>
     </div>
   )
 }
