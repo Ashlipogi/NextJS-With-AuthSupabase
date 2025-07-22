@@ -128,7 +128,7 @@ export default function Login() {
         <div className="text-center">
           <Separator className="my-4" />
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Dont have an account?{" "}
             <Link href="/register" className="font-medium text-primary hover:underline transition-colors">
               Create one now
             </Link>

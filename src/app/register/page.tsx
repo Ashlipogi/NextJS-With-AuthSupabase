@@ -61,7 +61,7 @@ export default function Register() {
             </div>
             <CardTitle className="text-xl">Check your email</CardTitle>
             <CardDescription>
-              We've sent you a verification link. Please check your email and click the link to activate your account.
+              Weve sent you a verification link. Please check your email and click the link to activate your account.
             </CardDescription>
           </CardHeader>
           <CardContent>
