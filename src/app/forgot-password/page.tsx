@@ -88,7 +88,7 @@ const handleForgotPassword = async (e: React.FormEvent) => {
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Forgot password?</h1>
           <p className="text-muted-foreground">
-            Enter your email address and we'll send you a link to reset your password
+            Enter your email address and we will send you a link to reset your password
           </p>
         </div>
 
@@ -97,7 +97,7 @@ const handleForgotPassword = async (e: React.FormEvent) => {
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl text-center">Reset Password</CardTitle>
             <CardDescription className="text-center">
-              We'll send you a secure link to reset your password
+              We will send you a secure link to reset your password
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

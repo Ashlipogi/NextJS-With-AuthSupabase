@@ -30,9 +30,6 @@ export const AuthProvider = ({
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Track if toast has already been shown to prevent duplicates
-  const hasShownWelcome = useRef(false)
-  const hasShownSignedOut = useRef(false)
 
   useEffect(() => {
     const getInitialSession = async () => {
