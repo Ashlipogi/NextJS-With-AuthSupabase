@@ -8,7 +8,7 @@ export interface Database {
           id: string
           user_id: string
           username: string
-          password: string
+          password_hash: string
           title: string
           website: string
           notes: string
@@ -19,7 +19,7 @@ export interface Database {
           id?: string
           user_id: string
           username: string
-          password: string
+          password_hash: string
           title?: string
           website?: string
           notes?: string
@@ -30,7 +30,7 @@ export interface Database {
           id?: string
           user_id?: string
           username?: string
-          password?: string
+          password_hash: string
           title?: string
           website?: string
           notes?: string

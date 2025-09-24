@@ -121,7 +121,7 @@ export function CredentialsTable() {
         title: formData.title,
         website: formData.website,
         username: formData.username,
-        password: formData.password,
+        password_hash: formData.password,
         notes: formData.notes
       }
 
@@ -160,7 +160,7 @@ export function CredentialsTable() {
         title: formData.title,
         website: formData.website,
         username: formData.username,
-        password: formData.password,
+        password_hash: formData.password,
         notes: formData.notes
       }
 
@@ -224,7 +224,7 @@ export function CredentialsTable() {
       title: credential.title,
       website: credential.website,
       username: credential.username,
-      password: credential.password,
+      password: credential.password_hash,
       notes: credential.notes
     })
     setIsEditDialogOpen(true)
@@ -408,8 +408,8 @@ export function CredentialsTable() {
                       <div className="flex items-center space-x-2">
                         <code className="text-sm bg-muted px-2 py-1 rounded font-mono">
                           {passwordVisibility[credential.id] 
-                            ? credential.password 
-                            : maskPassword(credential.password)
+                            ? credential.password_hash 
+                            : maskPassword(credential.password_hash)
                           }
                         </code>
                         <Button
