@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../AuthProvider'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Button } from '../ui/button'
@@ -35,7 +35,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/alert-dialog'
-import { Badge } from '../ui/badge'
 import { Skeleton } from '../ui/skeleton'
 import { Plus, Eye, EyeOff, Edit, Trash2, Globe, Calendar } from 'lucide-react'
 import { toast } from 'sonner'
@@ -65,14 +64,7 @@ export function CredentialsTable() {
     notes: ''
   })
 
-  // Fetch credentials on component mount
-  useEffect(() => {
-    if (user) {
-      fetchCredentials()
-    }
-  }, [user])
-
-  const fetchCredentials = async () => {
+  const fetchCredentials = useCallback(async () => {
     if (!user) return
 
     try {
@@ -96,7 +88,14 @@ export function CredentialsTable() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user, supabase])
+
+  // Fetch credentials on component mount
+  useEffect(() => {
+    if (user) {
+      fetchCredentials()
+    }
+  }, [user, fetchCredentials])
 
   const resetForm = () => {
     setFormData({
