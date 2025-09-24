@@ -9,6 +9,7 @@ import { Badge } from "../components/ui/badge"
 import { Skeleton } from "../components/ui/skeleton"
 import { User, Mail, Calendar, Shield, Clock } from "lucide-react"
 import { toast } from "sonner"
+import { CredentialsTable } from "../components/credentials/CredentialsTable"
 
 export default function Dashboard() {
   const { session, user, isLoading } = useAuth()
@@ -61,7 +62,7 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="space-y-2">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">Welcome back!</h2>
-          <p className="text-muted-foreground">Heres an overview of your account information.</p>
+          <p className="text-muted-foreground">Here's an overview of your account and credentials.</p>
         </div>
 
         {/* User Info Cards */}
@@ -136,25 +137,42 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Additional Content Area */}
+        {/* Credentials Management Section */}
+        <CredentialsTable />
+
+        {/* Getting Started Section */}
         <Card className="shadow-md">
           <CardHeader>
-            <CardTitle>Getting Started</CardTitle>
+            <CardTitle>Security Tips</CardTitle>
             <CardDescription>
-              Your account is set up and ready to go. Here are some next steps you might consider.
+              Keep your credentials safe with these best practices.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Customize Your Profile</h4>
+                <h4 className="text-sm font-medium">Use Strong Passwords</h4>
                 <p className="text-sm text-muted-foreground">
-                  Add more information to your profile to personalize your experience.
+                  Create unique, complex passwords for each account to enhance security.
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="text-sm font-medium">Explore Features</h4>
-                <p className="text-sm text-muted-foreground">Discover all the features available in your dashboard.</p>
+                <h4 className="text-sm font-medium">Regular Updates</h4>
+                <p className="text-sm text-muted-foreground">
+                  Review and update your stored credentials regularly for optimal security.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Secure Access</h4>
+                <p className="text-sm text-muted-foreground">
+                  Your credentials are encrypted and only accessible to you.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Backup Important Data</h4>
+                <p className="text-sm text-muted-foreground">
+                  Consider keeping secure backups of critical credentials.
+                </p>
               </div>
             </div>
           </CardContent>

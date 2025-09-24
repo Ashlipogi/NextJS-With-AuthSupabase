@@ -12,7 +12,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "FIRSTNEXT - Modeasdasdasrn Authentication",
+  title: "NEXTJS - Vault Credentials",
   description: "Next.js app with Supabase authentication and modern UI",
 }
 
